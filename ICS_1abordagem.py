@@ -72,9 +72,19 @@ class ICS:
             # Retorna os usuários que são seguidos pelo usuário UserID.
             following_users = list(self.__follow["following_user_newId"].loc[self.__follow["user_newId"] == userId])
 
+            # Retorna os usuários que são seguidores do usuário UserID.
+            follow_userID = list(self.__follow["user_newId"].loc[self.__follow["following_user_newId"] == userId])
+
             for user in following_users:
                 newsSharedByUserFollowing = list(self.__train_news_users["id_news"].loc[self.__train_news_users["id_social_media_account"] == user])
                 for new in newsSharedByUserFollowing:
+                    temp = list(self.__train_news_users["ground_truth_label"].loc[self.__train_news_users["id_news"] == new])
+                    labelNewsSharedByUserFollowing = temp[0]
+                    newsSharedByUser.append(labelNewsSharedByUserFollowing)
+
+            for user in follow_userID:
+                newsSharedByFollowUserID = list(self.__train_news_users["id_news"].loc[self.__train_news_users["id_social_media_account"] == user])
+                for new in newsSharedByFollowUserID:
                     temp = list(self.__train_news_users["ground_truth_label"].loc[self.__train_news_users["id_news"] == new])
                     labelNewsSharedByUserFollowing = temp[0]
                     newsSharedByUser.append(labelNewsSharedByUserFollowing)
@@ -173,8 +183,8 @@ class ICS:
 ics = ICS()
 ics.fit()
 media = 0.0
-tamanho_de_teste = 0.1
-quantidade = 5
+tamanho_de_teste = 0.3
+quantidade = 20
 for i in range(quantidade):
     acuracia = ics.fit(tamanho_de_teste)
     print("Acurácia", i+1, "=", acuracia)
